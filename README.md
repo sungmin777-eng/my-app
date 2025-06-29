@@ -1,46 +1,81 @@
-# Getting Started with Create React App
+# KOICA IPDI 통합사업설계도구 웹 이식 프로젝트
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+본 프로젝트는 KOICA(한국국제협력단)에서 내부적으로 활용하던 Excel VBA 기반의 [IPDI: Integrated Project Design Instrument]를  
+웹 애플리케이션으로 이식 및 고도화한 개발 사례입니다.  
+Excel 기반으로 운영되던 사업 설계 프로세스를 웹화함으로써 **협업, 확장성, 유지보수, 사용성 측면에서 전반적인 개선을 목표**로 합니다.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📌 프로젝트 개발 목적
 
-### `npm start`
+- 엑셀 기반의 IPDI 도구는 유지보수가 어렵고, 사용자 오류 가능성이 높으며, 협업·연동이 제한됨
+- React + TypeScript 기반으로 설계도구를 웹에서 사용 가능하게 하여 **사용성, 안전성, 생산성 향상**
+- 모든 주요 기능은 Excel VBA에서 수행하던 구조와 동일하게 동작하되, **보다 직관적인 UI와 유효성 검증, 로컬 저장, 예시파일 제공** 등 UX 개선을 병행
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## ⚙️ 기술 스택
 
-### `npm test`
+| 항목              | 내용                                         |
+|------------------|----------------------------------------------|
+| 프레임워크       | React 18 (CRA + TypeScript 4.9.5)            |
+| 상태 관리        | useState + localStorage                      |
+| 라우팅           | React Router DOM v6                          |
+| 스타일링         | styled-components                            |
+| CSV 파싱         | papaparse                                    |
+| UI 개선 요소     | 예시 파일 다운로드, 유효성 검증, 자동 포맷 |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🔄 Excel VBA 기능 → 웹 기능 대응 구조
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| VBA 기반 기능 이름               | 웹 구현 기능 설명                                               |
+|----------------------------------|------------------------------------------------------------------|
+| `Functions_TREE_*`              | 문제해결 트리 구조 (드래그 정렬, 자동 분류, 번호 부여, 저장)   |
+| `Functions_BUDGET_Parse`        | 예산 항목 입력, CSV 업로드, 총합계 계산, 항목별 분류            |
+| `Functions_INDICATOR_Metric`    | 정량/정성 성과지표 입력, CSV 업로드, 형식 검증 및 합산           |
+| `Functions_EFFECT_*`            | 기대 효과 자유 입력 + CSV 불러오기                               |
+| `Functions_RISK_Eval`           | 리스크 요인, 영향도, 가능성 입력, 위험도 계산, CSV 업로드        |
+| `Functions_DEPT_Assign`         | 주관·협력 부처 선택, 자유입력 및 태깅 (추후 개발 포함)           |
+| `Functions_SUMMARY/OUTPUT`      | 전체 출력 요약, 자동 연동 (예산, 트리, 성과지표 등 종합 연계)   |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ✅ 주요 기능 요약
 
-### `npm run eject`
+### 1. 🌳 문제해결 트리 고도화
+- 트리 항목 추가 / 삭제 / 제목 수정
+- 효과/결과/산출물 자동 분류 및 번호 부여
+- 위·아래 이동, 드래그 정렬
+- 로컬 저장/불러오기
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 2. 💰 예산 편성
+- 항목 단위로 예산 입력
+- CSV 업로드 + 유효성 검증
+- 예시 CSV 다운로드 지원
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. 📊 성과 지표
+- 정량/정성 지표 구분
+- 수치 합산 및 검증
+- CSV 업로드 + 예시 파일 제공
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 4. ✨ 기대 효과
+- 자유입력 + CSV 업로드
+- 예시 CSV 제공
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 5. ⚠️ 리스크 분석
+- 위험 요인 입력, 영향도 x 가능성 계산
+- CSV 업로드 + 예시 파일 제공
 
-## Learn More
+### 6. 📄 전체 출력 탭 (Output)
+- 트리/예산/성과지표/기대효과/리스크 연동
+- 설계한 사업 전체 요약을 PDF 또는 화면으로 정리 가능
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📂 프로젝트 실행 방법
+
+```bash
+npm install
+npm start
+http://localhost:3000

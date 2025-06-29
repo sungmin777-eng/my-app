@@ -26,25 +26,21 @@ export const IndicatorPage: React.FC = () => {
     setItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleChange = (
-      id: string,
-      field: keyof IndicatorItem,
-      value: string
-  ) => {
+  const handleChange = (id: string, field: keyof IndicatorItem, value: string) => {
     setItems(prev =>
-        prev.map(item =>
-            item.id === id
-                ? {
-                  ...item,
-                  [field]:
-                      field === 'amount'
-                          ? Number.isFinite(Number(value)) ? parseFloat(value || '0') : 0
-                          : field === 'type'
-                              ? (value === '정량' || value === '정성' ? value : '정량')
-                              : value || '',
-                }
-                : item
-        )
+      prev.map(item =>
+        item.id === id
+          ? {
+            ...item,
+            [field]:
+              field === 'amount'
+                ? Number.isFinite(Number(value)) ? parseFloat(value || '0') : 0
+                : field === 'type'
+                  ? value === '정량' || value === '정성' ? value : '정량'
+                  : value || '',
+          }
+          : item
+      )
     );
   };
 
@@ -66,15 +62,13 @@ export const IndicatorPage: React.FC = () => {
       }
       const parsed = JSON.parse(saved);
       if (!Array.isArray(parsed)) throw new Error('배열 아님');
-
       const valid = parsed.filter((item: any) =>
-          item &&
-          typeof item.id === 'string' &&
-          typeof item.description === 'string' &&
-          Number.isFinite(item.amount) &&
-          (item.type === '정량' || item.type === '정성')
+        item &&
+        typeof item.id === 'string' &&
+        typeof item.description === 'string' &&
+        Number.isFinite(item.amount) &&
+        (item.type === '정량' || item.type === '정성')
       );
-
       setItems(valid);
       alert('불러오기 완료');
     } catch {
@@ -93,10 +87,10 @@ export const IndicatorPage: React.FC = () => {
         const parsed = result.data;
 
         const isValid = parsed.every(row =>
-            row &&
-            typeof row.description === 'string' &&
-            !isNaN(parseFloat(row.amount)) &&
-            (row.type === '정량' || row.type === '정성')
+          row &&
+          typeof row.description === 'string' &&
+          !isNaN(parseFloat(row.amount)) &&
+          (row.type === '정량' || row.type === '정성')
         );
 
         if (!isValid) {
@@ -120,70 +114,77 @@ export const IndicatorPage: React.FC = () => {
     });
   };
 
+  const downloadExampleCSV = () => {
+    const csvContent = `description,amount,type\n참여자 수,100,정량\n만족도 향상,80,정성\n보고서 제출 수,12,정량`;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'indicator_example.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const total = items.reduce((sum, item) => sum + (Number.isFinite(item.amount) ? item.amount : 0), 0);
 
   return (
-      <Wrapper>
-        <h2>성과 지표</h2>
-        <ButtonRow>
-          <button onClick={handleAddItem}>지표 추가</button>
-          <button onClick={saveData}>저장</button>
-          <button onClick={loadData}>불러오기</button>
-          <label>
-            <UploadInput type="file" accept=".csv" onChange={handleCSVUpload} />
-            📁 CSV 업로드
-          </label>
-        </ButtonRow>
-        <Table>
-          <thead>
-          <tr>
-            <th>지표 설명</th>
-            <th>수치</th>
-            <th>유형</th>
-            <th>삭제</th>
+    <Wrapper>
+      <h2>성과 지표</h2>
+      <ButtonRow>
+        <button onClick={handleAddItem}>지표 추가</button>
+        <button onClick={saveData}>저장</button>
+        <button onClick={loadData}>불러오기</button>
+        <label>
+          <UploadInput type="file" accept=".csv" onChange={handleCSVUpload} />
+          📁 CSV 업로드
+        </label>
+        <button onClick={downloadExampleCSV}>📥 예시 CSV 다운로드</button>
+      </ButtonRow>
+      <Table>
+        <thead>
+        <tr>
+          <th>지표 설명</th>
+          <th>수치</th>
+          <th>유형</th>
+          <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        {items.map(item => (
+          <tr key={item.id}>
+            <td>
+              <input
+                type="text"
+                value={item.description}
+                onChange={(e) => handleChange(item.id, 'description', e.target.value)}
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                value={item.amount}
+                onChange={(e) => handleChange(item.id, 'amount', e.target.value)}
+              />
+            </td>
+            <td>
+              <select
+                value={item.type}
+                onChange={(e) => handleChange(item.id, 'type', e.target.value)}
+              >
+                <option value="정량">정량</option>
+                <option value="정성">정성</option>
+              </select>
+            </td>
+            <td>
+              <button onClick={() => handleDeleteItem(item.id)}>삭제</button>
+            </td>
           </tr>
-          </thead>
-          <tbody>
-          {items.map(item => (
-              <tr key={item.id}>
-                <td>
-                  <input
-                      type="text"
-                      value={item.description}
-                      onChange={(e) =>
-                          handleChange(item.id, 'description', e.target.value)
-                      }
-                  />
-                </td>
-                <td>
-                  <input
-                      type="number"
-                      value={item.amount}
-                      onChange={(e) =>
-                          handleChange(item.id, 'amount', e.target.value)
-                      }
-                  />
-                </td>
-                <td>
-                  <select
-                      value={item.type}
-                      onChange={(e) =>
-                          handleChange(item.id, 'type', e.target.value)
-                      }
-                  >
-                    <option value="정량">정량</option>
-                    <option value="정성">정성</option>
-                  </select>
-                </td>
-                <td>
-                  <button onClick={() => handleDeleteItem(item.id)}>삭제</button>
-                </td>
-              </tr>
-          ))}
-          </tbody>
-        </Table>
-        <TotalRow>총 수치 합계: {total.toLocaleString()}</TotalRow>
-      </Wrapper>
+        ))}
+        </tbody>
+      </Table>
+      <TotalRow>총 수치 합계: {total.toLocaleString()}</TotalRow>
+    </Wrapper>
   );
 };
 
